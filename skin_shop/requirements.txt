@@ -1,0 +1,23 @@
+# --- Core Framework ---
+Django==5.1.2
+python-dotenv==1.0.1
+
+# --- Database (PostgreSQL driver) ---
+psycopg2-binary==2.9.9
+
+# --- Frontend Integration ---
+django-tailwind==3.8.0
+whitenoise==6.7.0
+django-htmx==1.17.0
+
+# --- Utilities ---
+pillow==10.4.0        # робота з .png (скіни)
+requests==2.32.3      # HTTP-запити до Minecraft плагіна
+
+# --- Optional (для розробки, можна вимкнути) ---
+black==24.8.0         # автоформатування
+flake8==7.1.1         # перевірка стилю коду
+isort==5.13.2         # сортування імпортів
+
+# --- Payments ---
+# liqpay-python==1.0.3      
