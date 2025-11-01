@@ -1,80 +1,92 @@
 <!DOCTYPE html>
 <html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Minecraft Skins Shop{% endblock %}</title>
 
-    <!-- Tailwind CSS (через CDN для MVP) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Minecraft Skins Shop{% endblock %}</title>
 
-    <!-- Tailwind конфігурація: можна додати кольори в стилі Minecraft -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              minecraft: {
-                green: '#55FF55',
-                dark: '#222222',
-                brown: '#805A3B',
-                stone: '#A8A8A8',
-              },
+  <!-- Tailwind CSS (через CDN для MVP) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind конфігурація: можна додати кольори в стилі Minecraft -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            minecraft: {
+              green: '#55FF55',
+              dark: '#222222',
+              brown: '#805A3B',
+              stone: '#A8A8A8',
             },
           },
         },
-      };
-    </script>
+      },
+    };
+  </script>
 
-    <!-- HTMX (для інтерактивності без JS фреймворків) -->
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <!-- HTMX (для інтерактивності без JS фреймворків) -->
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 
-    <!-- Alpine.js (для невеликої динаміки) -->
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Alpine.js (для невеликої динаміки) -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-    {% block extra_head %}{% endblock %}
-  </head>
+  {% block extra_head %}{% endblock %}
+</head>
 
-  <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
-    <!-- Навігація -->
-    <nav class="bg-minecraft-dark text-gray-100 shadow-lg">
-      <div class="container mx-auto flex justify-between items-center px-4 py-3">
-        <a href="#" class="text-xl font-bold text-minecraft-green">
-          🧱 MC Skins
-        </a>
-        <ul class="flex space-x-6 text-sm uppercase tracking-wide">
-          <li><a href="#" class="hover:text-minecraft-green">Головна</a></li>
-          <li><a href="#" class="hover:text-minecraft-green">Магазин</a></li>
-          <li><a href="#" class="hover:text-minecraft-green">Мої скіни</a></li>
-          <li><a href="#" class="hover:text-minecraft-green">Про нас</a></li>
-          <li><a href="#" class="hover:text-minecraft-green">Підтримка</a></li>
-        </ul>
-      </div>
-    </nav>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
+  <!-- Навігація -->
+  <nav class="flex justify-between items-center bg-gray-800 text-white p-4">
+    <div class="flex space-x-4">
+      <a href="{% url 'home' %}" class="hover:text-gray-300">Головна</a>
+      <a href="#" class="hover:text-gray-300">Магазин</a>
+      <a href="#" class="hover:text-gray-300">Профіль</a>
+    </div>
 
-    <!-- Основний контент -->
-    <main class="flex-grow container mx-auto px-4 py-8">
-      {% block content %}
-      <div class="text-center mt-20">
-        <h1 class="text-4xl font-bold text-minecraft-green">Minecraft Skin Store</h1>
-        <p class="mt-4 text-gray-400">
-          Купуй, переглядай та активуй улюблені скіни прямо у грі!
-        </p>
-        <a
-          href="#"
-          class="mt-6 inline-block bg-minecraft-green text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-400 transition"
-        >
-          Перейти в магазин
-        </a>
-      </div>
-      {% endblock %}
-    </main>
+    <div class="flex items-center space-x-4">
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg">
+          Вийти
+        </button>
+      </form>
+      {% else %}
+      <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg">
+        Увійти
+      </a>
+      <a href="{% url 'register' %}" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg">
+        Реєстрація
+      </a>
+      {% endif %}
+    </div>
+  </nav>
 
-    <!-- Футер -->
-    <footer class="bg-minecraft-dark text-gray-400 text-center py-4 text-sm mt-auto">
-      <p>
-        &copy; {{ year|default:2025 }} Minecraft Skin Store. Усі права захищено.
+
+  <!-- Основний контент -->
+  <main class="flex-grow container mx-auto px-4 py-8">
+    {% block content %}
+    <div class="text-center mt-20">
+      <h1 class="text-4xl font-bold text-minecraft-green">Minecraft Skin Store</h1>
+      <p class="mt-4 text-gray-400">
+        Купуй, переглядай та активуй улюблені скіни прямо у грі!
       </p>
-    </footer>
-  </body>
+      <a href="#"
+        class="mt-6 inline-block bg-minecraft-green text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-400 transition">
+        Перейти в магазин
+      </a>
+    </div>
+    {% endblock %}
+  </main>
+
+  <!-- Футер -->
+  <footer class="bg-minecraft-dark text-gray-400 text-center py-4 text-sm mt-auto">
+    <p>
+      &copy; {{ year|default:2025 }} Minecraft Skin Store. Усі права захищено.
+    </p>
+  </footer>
+</body>
+
 </html>
