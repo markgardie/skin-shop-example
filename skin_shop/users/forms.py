@@ -55,6 +55,18 @@ class UserRegistrationForm(UserCreationForm):
             user.save()
         return user
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                "class": (
+                    "w-full bg-gray-700 text-white border border-gray-600 "
+                    "rounded-lg px-3 py-2 focus:outline-none "
+                    "focus:ring-2 focus:ring-blue-500"
+                )
+            })
+            field.label_suffix = ""  # прибирає двокрапку після label
 
 
 class UserLoginForm(AuthenticationForm):
@@ -72,3 +84,16 @@ class UserLoginForm(AuthenticationForm):
             "placeholder": "Введіть пароль"
         })
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                "class": (
+                    "w-full bg-gray-700 text-white border border-gray-600 "
+                    "rounded-lg px-3 py-2 focus:outline-none "
+                    "focus:ring-2 focus:ring-blue-500"
+                )
+            })
+            field.label_suffix = ""
