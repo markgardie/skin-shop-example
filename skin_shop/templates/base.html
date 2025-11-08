@@ -40,24 +40,24 @@
   <!-- Навігація -->
   <nav class="flex justify-between items-center bg-gray-800 text-white p-4">
     <div class="flex space-x-4">
-      <a href="{% url 'home' %}" class="hover:text-gray-300">Головна</a>
+      <a href="{% url 'core:home' %}" class="hover:text-gray-300">Головна</a>
       <a href="#" class="hover:text-gray-300">Магазин</a>
       <a href="#" class="hover:text-gray-300">Профіль</a>
     </div>
 
     <div class="flex items-center space-x-4">
       {% if user.is_authenticated %}
-      <form method="post" action="{% url 'logout' %}">
+      <form method="post" action="{% url 'users:logout' %}">
         {% csrf_token %}
         <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg">
           Вийти
         </button>
       </form>
       {% else %}
-      <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg">
+      <a href="{% url 'users:login' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg">
         Увійти
       </a>
-      <a href="{% url 'register' %}" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg">
+      <a href="{% url 'users:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg">
         Реєстрація
       </a>
       {% endif %}
