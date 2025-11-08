@@ -97,3 +97,39 @@ class UserLoginForm(AuthenticationForm):
                 )
             })
             field.label_suffix = ""
+
+class ProfileForm(forms.ModelForm):
+    """Форма редагування профілю користувача."""
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "avatar", "minecraft_uuid", "minecraft_nickname"]
+
+        widgets = {
+            "username": forms.TextInput(attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Ім'я користувача",
+            }),
+            "email": forms.EmailInput(attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Email",
+            }),
+            "minecraft_uuid": forms.TextInput(attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "UUID Minecraft",
+            }),
+            "minecraft_nickname": forms.TextInput(attrs={
+                "class": "input input-bordered w-full",
+                "placeholder": "Нікнейм у грі",
+            }),
+            "avatar": forms.ClearableFileInput(attrs={
+                "class": "file-input file-input-bordered w-full",
+            }),
+        }
+
+    def clean_email(self):
+        """Забороняємо дублювання email."""
+        email = self.cleaned_data["email"]
+        if User.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
+            raise forms.ValidationError("Цей email уже використовується іншим користувачем.")
+        return email

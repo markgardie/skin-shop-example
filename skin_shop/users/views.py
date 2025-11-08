@@ -1,9 +1,11 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, RedirectView
+from django.views.generic import CreateView, RedirectView, UpdateView, DetailView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm, ProfileForm
 from .models import User
 
 
@@ -30,9 +32,32 @@ class CustomLoginView(LoginView):
 class CustomLogoutView(LogoutView):
     next_page = reverse_lazy("home")
 
-from django.views.generic import TemplateView
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    """Перегляд профілю користувача."""
+    model = User
+    template_name = "users/profile_detail.html"
+    context_object_name = "user_profile"
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
 
-class TestHomeView(TemplateView):
-    template_name = "test_home.html"
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """Редагування профілю користувача."""
+    model = User
+    form_class = ProfileForm
+    template_name = "users/profile_update.html"
+    success_url = reverse_lazy("users:profile_detail")
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, "Профіль успішно оновлено ✅")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Помилка при оновленні профілю.")
+        return super().form_invalid(form)
+
 
