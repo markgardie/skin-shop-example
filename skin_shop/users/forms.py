@@ -98,38 +98,41 @@ class UserLoginForm(AuthenticationForm):
             })
             field.label_suffix = ""
 
-class ProfileForm(forms.ModelForm):
-    """Форма редагування профілю користувача."""
+class ProfileUpdateForm(forms.ModelForm):
+    """Форма для редагування профілю користувача."""
 
     class Meta:
         model = User
-        fields = ["username", "email", "avatar", "minecraft_uuid", "minecraft_nickname"]
-
-        widgets = {
-            "username": forms.TextInput(attrs={
-                "class": "input input-bordered w-full",
-                "placeholder": "Ім'я користувача",
-            }),
-            "email": forms.EmailInput(attrs={
-                "class": "input input-bordered w-full",
-                "placeholder": "Email",
-            }),
-            "minecraft_uuid": forms.TextInput(attrs={
-                "class": "input input-bordered w-full",
-                "placeholder": "UUID Minecraft",
-            }),
-            "minecraft_nickname": forms.TextInput(attrs={
-                "class": "input input-bordered w-full",
-                "placeholder": "Нікнейм у грі",
-            }),
-            "avatar": forms.ClearableFileInput(attrs={
-                "class": "file-input file-input-bordered w-full",
-            }),
+        fields = ["username", "email", "avatar", "minecraft_nickname", "minecraft_uuid"]
+        labels = {
+            "username": "Ім'я користувача",
+            "email": "Email",
+            "avatar": "Аватар",
+            "minecraft_nickname": "Нік у грі",
+            "minecraft_uuid": "UUID Minecraft",
         }
 
-    def clean_email(self):
-        """Забороняємо дублювання email."""
-        email = self.cleaned_data["email"]
-        if User.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
-            raise forms.ValidationError("Цей email уже використовується іншим користувачем.")
-        return email
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            base_classes = (
+                "w-full bg-gray-700 text-white border border-gray-600 "
+                "rounded-lg px-3 py-2 focus:outline-none focus:ring-2 "
+                "focus:ring-blue-500"
+            )
+
+            if isinstance(field.widget, forms.FileInput):
+                # окремий стиль для file input
+                field.widget.attrs.update({
+                    "class": "block w-full text-sm text-gray-300 "
+                             "file:mr-4 file:py-2 file:px-4 "
+                             "file:rounded-lg file:border-0 "
+                             "file:text-sm file:font-semibold "
+                             "file:bg-minecraft-green file:text-black "
+                             "hover:file:bg-green-400"
+                })
+            else:
+                field.widget.attrs.update({"class": base_classes})
+
+            field.label_suffix = ""

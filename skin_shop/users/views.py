@@ -5,7 +5,7 @@ from django.views.generic import CreateView, RedirectView, UpdateView, DetailVie
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
-from .forms import UserRegistrationForm, UserLoginForm, ProfileForm
+from .forms import UserRegistrationForm, UserLoginForm, ProfileUpdateForm
 from .models import User
 
 
@@ -45,7 +45,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """Редагування профілю користувача."""
     model = User
-    form_class = ProfileForm
+    form_class = ProfileUpdateForm
     template_name = "users/profile_update.html"
     success_url = reverse_lazy("users:profile_detail")
 

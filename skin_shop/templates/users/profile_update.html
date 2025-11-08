@@ -1,71 +1,68 @@
 {% extends "base.html" %}
-{% block title %}Редагування профілю — Minecraft Skins Shop{% endblock %}
+{% block title %}Редагування профілю{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-2xl shadow-md">
-  <h1 class="text-2xl font-bold mb-6 text-minecraft-green text-center">Редагування профілю</h1>
+<div class="max-w-2xl mx-auto bg-gray-800 rounded-2xl shadow-lg p-8">
+  <h1 class="text-2xl font-bold text-minecraft-green mb-6 text-center">
+    Редагування профілю
+  </h1>
 
-  <form method="POST" enctype="multipart/form-data" class="space-y-5">
+  <form method="post" enctype="multipart/form-data" class="space-y-5">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
-      <div class="bg-red-600 text-white p-3 rounded-lg">
+      <div class="bg-red-700 text-white p-3 rounded-lg">
         {{ form.non_field_errors }}
       </div>
     {% endif %}
 
-    <!-- Аватар -->
-    <div class="flex items-center space-x-6">
+    <!-- Поле аватара -->
+    <div class="flex flex-col items-center space-y-3">
       {% if user.avatar %}
-        <img src="{{ user.avatar.url }}" alt="avatar"
-             class="w-20 h-20 rounded-full object-cover border-2 border-minecraft-green">
+        <img src="{{ user.avatar.url }}" alt="Avatar"
+             class="w-24 h-24 rounded-full object-cover border-2 border-minecraft-green">
       {% else %}
-        <div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center text-gray-400 text-sm">
-          Немає аватара
+        <div class="w-24 h-24 rounded-full bg-gray-600 flex items-center justify-center text-gray-300 text-3xl font-bold">
+          {{ user.username|first|upper }}
         </div>
       {% endif %}
-      <div class="flex-1">
-        <label class="block mb-1 text-gray-300">{{ form.avatar.label }}</label>
-        {{ form.avatar }}
+      {{ form.avatar }}
+    </div>
+
+    <!-- Поля форми -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <label class="block text-gray-300 mb-1">{{ form.username.label }}</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+
+      <div>
+        <label class="block text-gray-300 mb-1">{{ form.email.label }}</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+      </div>
+
+      <div>
+        <label class="block text-gray-300 mb-1">{{ form.minecraft_nickname.label }}</label>
+        {{ form.minecraft_nickname }}
+        {{ form.minecraft_nickname.errors }}
+      </div>
+
+      <div>
+        <label class="block text-gray-300 mb-1">{{ form.minecraft_uuid.label }}</label>
+        {{ form.minecraft_uuid }}
+        {{ form.minecraft_uuid.errors }}
       </div>
     </div>
 
-    <div>
-      <label class="block mb-1 text-gray-300">{{ form.username.label }}</label>
-      {{ form.username }}
-      {{ form.username.errors }}
-    </div>
+    <div class="flex justify-between items-center mt-6">
+      <a href="{% url 'users:profile_detail' %}" 
+         class="text-gray-400 hover:text-white transition">← Назад до профілю</a>
 
-    <div>
-      <label class="block mb-1 text-gray-300">{{ form.email.label }}</label>
-      {{ form.email }}
-      {{ form.email.errors }}
-    </div>
-
-    <div class="border-t border-gray-700 my-6"></div>
-
-    <h2 class="text-xl font-semibold text-minecraft-green mb-2">Minecraft профіль</h2>
-
-    <div>
-      <label class="block mb-1 text-gray-300">{{ form.minecraft_nickname.label }}</label>
-      {{ form.minecraft_nickname }}
-      {{ form.minecraft_nickname.errors }}
-    </div>
-
-    <div>
-      <label class="block mb-1 text-gray-300">{{ form.minecraft_uuid.label }}</label>
-      {{ form.minecraft_uuid }}
-      {{ form.minecraft_uuid.errors }}
-    </div>
-
-    <div class="flex justify-between mt-8">
-      <a href="{% url 'users:profile_detail' %}"
-         class="btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
-        Скасувати
-      </a>
       <button type="submit"
-              class="btn bg-minecraft-green hover:bg-green-400 text-black font-semibold px-6 py-2 rounded-lg">
-        Зберегти
+              class="bg-minecraft-green text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-400 transition">
+        Зберегти зміни
       </button>
     </div>
   </form>
