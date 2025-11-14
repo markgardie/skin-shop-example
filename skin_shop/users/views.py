@@ -13,7 +13,7 @@ class RegisterView(CreateView):
     model = User
     form_class = UserRegistrationForm
     template_name = "users/register.html"
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("core:home")
 
     def form_valid(self, form):
         """Після успішної реєстрації — автоматичний вхід користувача."""
@@ -27,10 +27,10 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        return reverse_lazy("home")
+        return reverse_lazy("core:home")
 
 class CustomLogoutView(LogoutView):
-    next_page = reverse_lazy("home")
+    next_page = reverse_lazy("core:home")
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     """Перегляд профілю користувача."""
