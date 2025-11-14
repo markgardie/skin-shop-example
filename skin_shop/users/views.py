@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, RedirectView, UpdateView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.shortcuts import redirect
+import os
 
 from .forms import UserRegistrationForm, UserLoginForm, ProfileUpdateForm
 from .models import User
@@ -59,5 +61,23 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, "Помилка при оновленні профілю.")
         return super().form_invalid(form)
+    
+    def post(self, request, *args, **kwargs):
+        # натиснули кнопку "Видалити аватар"
+        if "delete_avatar" in request.POST:
+            user = self.get_object()
+            if user.avatar:
+                # Видаляємо файл із файлової системи
+                if os.path.isfile(user.avatar.path):
+                    os.remove(user.avatar.path)
+
+                # Очищаємо поле
+                user.avatar = None
+                user.save()
+
+            return redirect("users:profile_update")
+
+        # звичайне збереження
+        return super().post(request, *args, **kwargs)
 
 

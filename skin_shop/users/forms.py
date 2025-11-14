@@ -111,6 +111,10 @@ class ProfileUpdateForm(forms.ModelForm):
             "minecraft_nickname": "Нік у грі",
             "minecraft_uuid": "UUID Minecraft",
         }
+        widgets = {
+            # ВАЖЛИВО: заміна ClearableFileInput → FileInput
+            "avatar": forms.FileInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -123,14 +127,16 @@ class ProfileUpdateForm(forms.ModelForm):
             )
 
             if isinstance(field.widget, forms.FileInput):
-                # окремий стиль для file input
+                # Стилі для file input
                 field.widget.attrs.update({
-                    "class": "block w-full text-sm text-gray-300 "
-                             "file:mr-4 file:py-2 file:px-4 "
-                             "file:rounded-lg file:border-0 "
-                             "file:text-sm file:font-semibold "
-                             "file:bg-minecraft-green file:text-black "
-                             "hover:file:bg-green-400"
+                    "class": (
+                        "block w-full text-sm text-gray-300 "
+                        "file:mr-4 file:py-2 file:px-4 "
+                        "file:rounded-lg file:border-0 "
+                        "file:text-sm file:font-semibold "
+                        "file:bg-minecraft-green file:text-black "
+                        "hover:file:bg-green-400"
+                    )
                 })
             else:
                 field.widget.attrs.update({"class": base_classes})
