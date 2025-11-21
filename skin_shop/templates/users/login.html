@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-center items-center min-h-screen bg-gray-900">
+  <div class="w-full max-w-md bg-gray-800 p-8 rounded-2xl shadow-lg">
+    <h2 class="text-2xl font-semibold text-white mb-6 text-center">Вхід</h2>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-gray-300 mb-1">
+            {{ field.label }}
+          </label>
+          {{ field }}
+          {% if field.errors %}
+            <p class="text-red-400 text-sm mt-1">{{ field.errors|striptags }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">
+        Увійти
+      </button>
+    </form>
+
+    <p class="text-gray-400 text-sm text-center mt-4">
+      Ще немає акаунта?
+      <a href="{% url 'users:register' %}" class="text-blue-400 hover:underline">Зареєструватися</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
