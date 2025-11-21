@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Власні модулі
     "users",
+    "shop"
 ]
 
 MIDDLEWARE = [
