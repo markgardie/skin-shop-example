@@ -12,10 +12,10 @@ app_name = "shop"
 
 urlpatterns = [
     path("", SkinListView.as_view(), name="skin_list"),
-    path("<slug:slug>/", SkinDetailView.as_view(), name="skin_detail"),
     path("create/", SkinCreateView.as_view(), name="skin_create"),
     path("<slug:slug>/edit/", SkinUpdateView.as_view(), name="skin_edit"),
     path("<slug:slug>/delete/", SkinDeleteView.as_view(), name="skin_delete"),
+    path("<slug:slug>/", SkinDetailView.as_view(), name="skin_detail"),
 
     path("ajax/category/create/", create_category, name="category_create"),
     path("ajax/category/delete/", delete_category, name="category_delete"),
