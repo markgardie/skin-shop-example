@@ -13,7 +13,7 @@ app_name = "shop"
 urlpatterns = [
     path("", SkinListView.as_view(), name="skin_list"),
     path("create/", SkinCreateView.as_view(), name="skin_create"),
-    path("<slug:slug>/edit/", SkinUpdateView.as_view(), name="skin_edit"),
+    path("<slug:slug>/edit/", SkinUpdateView.as_view(), name="skin_update"),
     path("<slug:slug>/delete/", SkinDeleteView.as_view(), name="skin_delete"),
     path("<slug:slug>/", SkinDetailView.as_view(), name="skin_detail"),
 
