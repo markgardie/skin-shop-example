@@ -29,13 +29,13 @@
 
         <!-- Зображення -->
         <a href="{% url 'shop:skin_detail' skin.slug %}">
-            <img src="{{ skin.preview.url }}" alt="{{ skin.name }}"
+            <img src="{{ skin.image.url }}" alt="{{ skin.name }}"
                  class="w-full h-48 object-cover">
         </a>
 
         <div class="p-4">
             <h2 class="text-xl font-semibold">
-                <a href="{% url 'shop:skin_detail' skin.pk %}">
+                <a href="{% url 'shop:skin_detail' skin.slug %}">
                     {{ skin.name }}
                 </a>
             </h2>
