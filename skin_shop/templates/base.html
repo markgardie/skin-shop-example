@@ -45,29 +45,13 @@
       <a href="{% url 'users:profile_detail' %}" class="hover:text-gray-300">Профіль</a>
     </div>
 
+    <div class="flex items-center space-x-6">
 
-    <!-- Іконка корзини -->
-    <a href="{% url 'cart:detail' %}" class="relative hover:text-gray-300 transition">
+      <!-- КОРЗИНА -->
+      <div id="cart-icon">
+        {% include "cart/partials/cart_icon.html" %}
+      </div>
 
-      <!-- SVG-іконка корзини -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-        class="w-7 h-7">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0L6.75 14.25h10.5l1.644-9H5.106zm0 0H19.5M6.75 14.25a3 3 0 106 0m-6 0h6" />
-      </svg>
-
-      {% if user.is_authenticated and user.cart %}
-      <!-- Лічильник товарів -->
-      <span class="absolute -top-1 -right-1 bg-red-600 text-white text-xs
-           rounded-full px-1.5 py-0.5 font-semibold">
-        {{ user.cart.total_quantity }}
-      </span>
-      {% endif %}
-
-    </a>
-
-
-    <div class="flex items-center space-x-4">
       {% if user.is_authenticated %}
       <form method="post" action="{% url 'users:logout' %}">
         {% csrf_token %}
@@ -84,6 +68,7 @@
       </a>
       {% endif %}
     </div>
+
   </nav>
 
 

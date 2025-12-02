@@ -6,8 +6,7 @@
     <h1 class="text-3xl font-bold">Список скінів</h1>
 
     {% if user.is_authenticated %}
-    <a href="{% url 'shop:skin_create' %}"
-       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+    <a href="{% url 'shop:skin_create' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
         Додати скін
     </a>
     {% endif %}
@@ -22,15 +21,14 @@
         <!-- Видалення (хрестик) -->
         {% if user.is_authenticated %}
         <a href="{% url 'shop:skin_delete' skin.slug %}"
-           class="absolute top-2 right-2 text-red-400 hover:text-red-600 text-2xl font-bold">
+            class="absolute top-2 right-2 text-red-400 hover:text-red-600 text-2xl font-bold">
             ×
         </a>
         {% endif %}
 
         <!-- Зображення -->
         <a href="{% url 'shop:skin_detail' skin.slug %}">
-            <img src="{{ skin.image.url }}" alt="{{ skin.name }}"
-                 class="w-full h-48 object-cover">
+            <img src="{{ skin.image.url }}" alt="{{ skin.name }}" class="w-full h-48 object-cover">
         </a>
 
         <div class="p-4">
@@ -49,13 +47,20 @@
             </p>
 
             <!-- Купити -->
-            <button class="mt-4 w-full bg-minecraft-green text-black font-semibold py-2 rounded-lg hover:bg-green-400">
-                Купити
-            </button>
+            <form hx-post="{% url 'cart:add' %}" hx-target="#cart-icon" hx-swap="outerHTML" class="mt-4">
+                {% csrf_token %}
+                <input type="hidden" name="skin_id" value="{{ skin.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit"
+                    class="w-full bg-minecraft-green text-black font-semibold py-2 rounded-lg hover:bg-green-400">
+                    Купити
+                </button>
+            </form>
+
 
             {% if user.is_authenticated %}
             <a href="{% url 'shop:skin_update' skin.slug %}"
-               class="block mt-2 text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+                class="block mt-2 text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
                 Редагувати
             </a>
             {% endif %}
