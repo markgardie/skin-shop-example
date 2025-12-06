@@ -19,4 +19,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-ENTRYPOINT ["gunicorn", "choresmanagement.wsgi", "-b", "0.0.0.0:8000"]
+ENTRYPOINT ["gunicorn", "skin_shop.wsgi", "-b", "0.0.0.0:8000"]
