@@ -6,6 +6,28 @@ from .models import Cart, CartItem
 from shop.models import Skin
 from .forms import AddToCartForm, UpdateCartItemForm, RemoveFromCartForm
 
+
+# ----------------------------
+# 1) Повна сторінка корзини
+# ----------------------------
+@login_required
+def cart_page(request):
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    return render(request, "cart/detail.html", {"cart": cart})
+
+
+# ----------------------------
+# 2) Partial для HTMX-запитів
+# ----------------------------
+@login_required
+def cart_items(request):
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    return render(request, "cart/partials/cart_items.html", {"cart": cart})
+
+
+# ----------------------------
+# 3) Додавання в корзину
+# ----------------------------
 @login_required
 def add_to_cart(request):
     if request.method != "POST":
@@ -19,28 +41,27 @@ def add_to_cart(request):
     quantity = form.cleaned_data["quantity"]
 
     skin = get_object_or_404(Skin, id=skin_id)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
 
-    # Створюємо корзину, якщо її немає
-    cart, created = Cart.objects.get_or_create(user=request.user)
-
-    # Шукаємо CartItem
-    item, item_created = CartItem.objects.get_or_create(
+    item, created = CartItem.objects.get_or_create(
         cart=cart,
         skin=skin,
         defaults={"quantity": quantity}
     )
 
-    if not item_created:
+    if not created:
         item.quantity += quantity
         item.save()
 
-    # Якщо HTMX – повертаємо partial
     if request.htmx:
         return render(request, "cart/partials/cart_items.html", {"cart": cart})
 
     return redirect("cart:detail")
 
 
+# ----------------------------
+# 4) Оновлення кількості
+# ----------------------------
 @login_required
 def update_cart_item(request):
     if request.method != "POST":
@@ -65,6 +86,9 @@ def update_cart_item(request):
     return redirect("cart:detail")
 
 
+# ----------------------------
+# 5) Видалення з корзини
+# ----------------------------
 @login_required
 def remove_from_cart(request):
     if request.method != "POST":
@@ -84,8 +108,3 @@ def remove_from_cart(request):
         return render(request, "cart/partials/cart_items.html", {"cart": cart})
 
     return redirect("cart:detail")
-
-@login_required
-def cart_detail(request):
-    cart, _ = Cart.objects.get_or_create(user=request.user)
-    return render(request, "cart/detail.html", {"cart": cart})

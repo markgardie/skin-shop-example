@@ -5,8 +5,12 @@
 
     <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
 
-    <div id="cart-items" hx-get="{% url 'cart:detail' %}" hx-trigger="load" hx-target="#cart-items" hx-swap="innerHTML">
-        <!-- initial load via HTMX -->
+    <div id="cart-items"
+         hx-get="{% url 'cart:items' %}"
+         hx-trigger="load"
+         hx-target="#cart-items"
+         hx-swap="innerHTML">
+        <!-- HTMX підвантажить partial -->
     </div>
 
 </div>
