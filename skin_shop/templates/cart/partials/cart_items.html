@@ -1,0 +1,13 @@
+{% if cart.items.all %}
+<div class="space-y-4">
+
+    {% for item in cart.items.all %}
+        {% include "cart/partials/cart_item_row.html" with item=item %}
+    {% endfor %}
+
+    {% include "cart/partials/cart_summary.html" with cart=cart %}
+
+</div>
+{% else %}
+    <p class="text-gray-500 text-lg">Your cart is empty.</p>
+{% endif %}

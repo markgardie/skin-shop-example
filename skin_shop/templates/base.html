@@ -6,10 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Minecraft Skins Shop{% endblock %}</title>
 
-  <!-- Tailwind CSS (через CDN для MVP) -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Tailwind конфігурація: можна додати кольори в стилі Minecraft -->
   <script>
     tailwind.config = {
       theme: {
@@ -27,16 +26,32 @@
     };
   </script>
 
-  <!-- HTMX (для інтерактивності без JS фреймворків) -->
+  <!-- HTMX -->
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 
-  <!-- Alpine.js (для невеликої динаміки) -->
+  <!-- Alpine -->
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
   {% block extra_head %}{% endblock %}
 </head>
 
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
+
+  <!-- 💡 НЕОБХІДНА форма з CSRF-токеном (щоб JS міг його забрати) -->
+  <form id="csrf-form" style="display:none;">
+      {% csrf_token %}
+  </form>
+
+  <!-- 💡 HTMX-хук, який додає CSRF у всі POST-запити -->
+  <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+          const csrfInput = document.querySelector('#csrf-form [name=csrfmiddlewaretoken]');
+          if (csrfInput) {
+              event.detail.headers['X-CSRFToken'] = csrfInput.value;
+          }
+      });
+  </script>
+
   <!-- Навігація -->
   <nav class="flex justify-between items-center bg-gray-800 text-white p-4">
     <div class="flex space-x-4">
@@ -45,7 +60,13 @@
       <a href="{% url 'users:profile_detail' %}" class="hover:text-gray-300">Профіль</a>
     </div>
 
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-6">
+
+      <!-- КОРЗИНА -->
+      <div id="cart-icon">
+        {% include "cart/partials/cart_icon.html" %}
+      </div>
+
       {% if user.is_authenticated %}
       <form method="post" action="{% url 'users:logout' %}">
         {% csrf_token %}
@@ -62,31 +83,18 @@
       </a>
       {% endif %}
     </div>
-  </nav>
 
+  </nav>
 
   <!-- Основний контент -->
   <main class="flex-grow container mx-auto px-4 py-8">
     {% block content %}
-    <div class="text-center mt-20">
-      <h1 class="text-4xl font-bold text-minecraft-green">Minecraft Skin Store</h1>
-      <p class="mt-4 text-gray-400">
-        Купуй, переглядай та активуй улюблені скіни прямо у грі!
-      </p>
-      <a href="#"
-        class="mt-6 inline-block bg-minecraft-green text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-400 transition">
-        Перейти в магазин
-      </a>
-    </div>
     {% endblock %}
   </main>
 
-  <!-- Футер -->
   <footer class="bg-minecraft-dark text-gray-400 text-center py-4 text-sm mt-auto">
-    <p>
-      &copy; {{ year|default:2025 }} Minecraft Skin Store. Усі права захищено.
-    </p>
+    <p>&copy; {{ year|default:2025 }} Minecraft Skin Store. Усі права захищено.</p>
   </footer>
-</body>
 
+</body>
 </html>
