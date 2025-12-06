@@ -10,8 +10,12 @@
 
     <div class="flex items-center gap-3">
 
-        <!-- Зменшити кількість -->
-        <form hx-post="{% url 'cart:update' %}" hx-target="#cart-items" hx-swap="outerHTML">
+        <!-- Зменшити -->
+        <form 
+            hx-post="{% url 'cart:update' %}"
+            hx-target="#cart-items"
+            hx-swap="innerHTML"
+        >
             <input type="hidden" name="item_id" value="{{ item.id }}">
             <input type="hidden" name="quantity" value="{{ item.quantity|add:-1 }}">
             <button class="btn btn-sm" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
@@ -19,15 +23,23 @@
 
         <span class="font-medium">{{ item.quantity }}</span>
 
-        <!-- Збільшити кількість -->
-        <form hx-post="{% url 'cart:update' %}" hx-target="#cart-items" hx-swap="outerHTML">
+        <!-- Збільшити -->
+        <form
+            hx-post="{% url 'cart:update' %}"
+            hx-target="#cart-items"
+            hx-swap="innerHTML"
+        >
             <input type="hidden" name="item_id" value="{{ item.id }}">
             <input type="hidden" name="quantity" value="{{ item.quantity|add:1 }}">
             <button class="btn btn-sm">+</button>
         </form>
 
         <!-- Видалити -->
-        <form hx-post="{% url 'cart:remove' %}" hx-target="#cart-items" hx-swap="outerHTML">
+        <form
+            hx-post="{% url 'cart:remove' %}"
+            hx-target="#cart-items"
+            hx-swap="innerHTML"
+        >
             <input type="hidden" name="item_id" value="{{ item.id }}">
             <button class="btn btn-sm btn-error">✕</button>
         </form>
