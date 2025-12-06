@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Мій профіль — Minecraft Skins Shop{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-2xl shadow-md">
+  <h1 class="text-2xl font-bold mb-6 text-minecraft-green text-center">Мій профіль</h1>
+
+  <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+    <!-- Аватар -->
+    <div class="flex flex-col items-center">
+      {% if user_profile.avatar %}
+        <img src="{{ user_profile.avatar.url }}" alt="avatar"
+             class="w-32 h-32 rounded-full object-cover border-4 border-minecraft-green" />
+      {% else %}
+        <div class="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center text-gray-400 text-lg">
+          Немає аватара
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Інформація -->
+    <div class="flex-1 space-y-3 text-gray-300">
+      <p><span class="font-semibold text-white">Ім’я користувача:</span> {{ user_profile.username|default:"—" }}</p>
+      <p><span class="font-semibold text-white">Email:</span> {{ user_profile.email }}</p>
+      <div class="border-t border-gray-700 my-4"></div>
+      <p><span class="font-semibold text-white">Minecraft нікнейм:</span> {{ user_profile.minecraft_nickname|default:"Не вказано" }}</p>
+      <p><span class="font-semibold text-white">UUID:</span> {{ user_profile.minecraft_uuid|default:"Не вказано" }}</p>
+    </div>
+  </div>
+
+  <div class="mt-8 text-center">
+    <a href="{% url 'users:profile_update' %}"
+       class="inline-block bg-minecraft-green text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-400 transition">
+      Редагувати профіль
+    </a>
+  </div>
+</div>
+{% endblock %}

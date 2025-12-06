@@ -1,0 +1,49 @@
+<div class="card bg-base-200 p-4 flex flex-row justify-between items-center rounded-xl">
+
+    <div class="flex items-center gap-4">
+        <img src="{{ item.skin.image.url }}" class="w-16 h-16 rounded-lg" alt="{{ item.skin.name }}">
+        <div>
+            <p class="font-semibold text-lg">{{ item.skin.name }}</p>
+            <p class="text-sm opacity-70">{{ item.skin.price }} UAH</p>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+
+        <!-- Зменшити -->
+        <form 
+            hx-post="{% url 'cart:update' %}"
+            hx-target="#cart-items"
+            hx-swap="innerHTML"
+        >
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <input type="hidden" name="quantity" value="{{ item.quantity|add:-1 }}">
+            <button class="btn btn-sm" {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
+        </form>
+
+        <span class="font-medium">{{ item.quantity }}</span>
+
+        <!-- Збільшити -->
+        <form
+            hx-post="{% url 'cart:update' %}"
+            hx-target="#cart-items"
+            hx-swap="innerHTML"
+        >
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <input type="hidden" name="quantity" value="{{ item.quantity|add:1 }}">
+            <button class="btn btn-sm">+</button>
+        </form>
+
+        <!-- Видалити -->
+        <form
+            hx-post="{% url 'cart:remove' %}"
+            hx-target="#cart-items"
+            hx-swap="innerHTML"
+        >
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <button class="btn btn-sm btn-error">✕</button>
+        </form>
+
+    </div>
+
+</div>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ skin.name }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
+    <img src="{{ skin.image.url }}" alt="{{ skin.name }}"
+         class="w-full h-64 object-cover rounded-lg mb-6">
+
+    <h1 class="text-3xl font-bold">{{ skin.name }}</h1>
+
+    <p class="text-gray-400 mt-4">{{ skin.description }}</p>
+
+    <p class="text-2xl font-bold text-minecraft-green mt-6">
+        {{ skin.price }} грн
+    </p>
+
+    <button class="mt-6 w-full bg-minecraft-green text-black font-semibold py-3 rounded-lg hover:bg-green-400">
+        Додати в корзину
+    </button>
+
+    {% if user.is_authenticated %}
+    <div class="flex gap-4 mt-6">
+        <a href="{% url 'shop:skin_update' skin.slug %}"
+           class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+            Редагувати
+        </a>
+        <a href="{% url 'shop:skin_delete' skin.slug %}"
+           class="flex-1 text-center bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg">
+            Видалити
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
