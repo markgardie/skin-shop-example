@@ -47,7 +47,7 @@
             </p>
 
             <!-- Купити -->
-            <form hx-post="{% url 'cart:add' %}" hx-target="#cart-icon" hx-swap="outerHTML" class="mt-4">
+            <form hx-post="{% url 'cart:add' %}" hx-target="#cart-icon" hx-swap="innerHTML" class="mt-4">
                 {% csrf_token %}
                 <input type="hidden" name="skin_id" value="{{ skin.id }}">
                 <input type="hidden" name="quantity" value="1">
@@ -56,6 +56,7 @@
                     Купити
                 </button>
             </form>
+
 
 
             {% if user.is_authenticated %}
