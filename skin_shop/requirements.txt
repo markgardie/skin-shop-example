@@ -4,6 +4,7 @@ python-dotenv==1.0.1
 
 # --- Database (PostgreSQL driver) ---
 psycopg2-binary==2.9.9
+dj-database-url>=1.0
 
 # --- Frontend Integration ---
 django-tailwind==3.8.0
