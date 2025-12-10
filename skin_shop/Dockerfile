@@ -1,7 +1,7 @@
 FROM python:3.12-slim-bullseye
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
@@ -17,6 +17,4 @@ COPY . /app/
 
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8000
-
-ENTRYPOINT ["gunicorn", "skin_shop.wsgi", "-b", "0.0.0.0:8000"]
+CMD ["gunicorn", "skin_shop.wsgi:application", "--bind", "0.0.0.0:${PORT}"]
