@@ -1,6 +1,7 @@
 # --- Core Framework ---
 Django==5.1.2
 python-dotenv==1.0.1
+gunicorn==21.2.0
 
 # --- Database (PostgreSQL driver) ---
 psycopg2-binary==2.9.9

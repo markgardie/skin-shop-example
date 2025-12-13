@@ -1,4 +1,3 @@
-# Базовий образ
 FROM python:3.12-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
@@ -17,9 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копіюємо проект
 COPY . /app/
 
-# Статичні файли та міграції
+# Тільки збираємо статику (без міграцій!)
 RUN python manage.py collectstatic --noinput
-RUN python manage.py migrate
 
-# Render використовує порт через $PORT
-CMD ["gunicorn", "skin_shop.wsgi:application", "--bind", "0.0.0.0:${PORT}"]
+# Використовуємо shell для підстановки $PORT
+CMD python manage.py migrate && gunicorn skin_shop.wsgi:application --bind 0.0.0.0:$PORT
