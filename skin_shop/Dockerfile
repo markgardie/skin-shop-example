@@ -16,8 +16,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копіюємо проект
 COPY . /app/
 
-# Тільки збираємо статику (без міграцій!)
+# Тільки збираємо статику
 RUN python manage.py collectstatic --noinput
 
-# Використовуємо shell для підстановки $PORT
-CMD python manage.py migrate && gunicorn skin_shop.wsgi:application --bind 0.0.0.0:$PORT
+# Міграції + створення адміна + запуск
+CMD python manage.py migrate && \
+    python manage.py initadmin && \
+    gunicorn skin_shop.wsgi:application --bind 0.0.0.0:$PORT
