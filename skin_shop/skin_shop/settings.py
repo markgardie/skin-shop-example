@@ -166,9 +166,12 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Media files (користувацькі завантаження)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files
+if DEBUG:
+    # Локально використовуємо файлову систему
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+# На продакшені DEFAULT_FILE_STORAGE вже встановлено на Cloudinary
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
