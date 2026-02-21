@@ -4,15 +4,20 @@ python-dotenv==1.0.1
 
 # --- Database (PostgreSQL driver) ---
 psycopg2-binary==2.9.9
+dj-database-url>=1.0
 
 # --- Frontend Integration ---
 django-tailwind==3.8.0
 whitenoise==6.7.0
 django-htmx==1.17.0
 
+# --- Media Storage (Cloudinary) ---
+cloudinary==1.41.0
+django-cloudinary-storage==0.3.0
+
 # --- Utilities ---
-# pillow==10.4.0        # робота з .png (скіни)
-# requests==2.32.3      # HTTP-запити до Minecraft плагіна
+pillow==10.4.0        # робота з .png (скіни)
+gunicorn==21.2.0      # WSGI сервер для production
 
 # --- Optional (для розробки, можна вимкнути) ---
 # black==24.8.0         # автоформатування
@@ -20,4 +25,4 @@ django-htmx==1.17.0
 # isort==5.13.2         # сортування імпортів
 
 # --- Payments ---
-# liqpay-python==1.0.3      
+# liqpay-python==1.0.3

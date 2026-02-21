@@ -1,22 +1,25 @@
 FROM python:3.12-slim-bullseye
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    gcc \
+# Системні пакети
+RUN apt-get update && apt-get install -y gcc \
     && rm -rf /var/lib/apt/lists/*
 
+# Python залежності
 COPY requirements.txt /app/
-
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Копіюємо проект
 COPY . /app/
 
+# Тільки збираємо статику
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8000
-
-ENTRYPOINT ["gunicorn", "skin_shop.wsgi", "-b", "0.0.0.0:8000"]
+# Міграції + створення адміна + запуск
+CMD python manage.py migrate && \
+    python manage.py initadmin && \
+    gunicorn skin_shop.wsgi:application --bind 0.0.0.0:$PORT
