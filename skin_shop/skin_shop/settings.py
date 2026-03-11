@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "users",
     "shop",
     "cart",
+    "minecraft",
 ]
 
 MIDDLEWARE = [
@@ -180,3 +181,13 @@ cloudinary.config(
 # -----------------------------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# -----------------------------------------------------------------------------
+# Minecraft RCON
+# -----------------------------------------------------------------------------
+
+MINECRAFT_RCON = {
+    "HOST": os.environ.get("MINECRAFT_RCON_HOST", "localhost"),
+    "PORT": int(os.environ.get("MINECRAFT_RCON_PORT", "25575")),
+    "PASSWORD": os.environ.get("MINECRAFT_RCON_PASSWORD", "skinshop_rcon_pass"),
+}
