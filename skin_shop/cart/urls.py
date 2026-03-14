@@ -7,6 +7,5 @@ urlpatterns = [
     path("", views.cart_page, name="detail"),         # повна сторінка
     path("items/", views.cart_items, name="items"),   # HTMX partial
     path("add/", views.add_to_cart, name="add"),
-    path("update/", views.update_cart_item, name="update"),
     path("remove/", views.remove_from_cart, name="remove"),
 ]
