@@ -127,3 +127,62 @@ def order_list(request):
 
     return render(request, "cart/order_list.html", {"orders": orders})
 
+from django.http import HttpResponseForbidden
+
+
+# ----------------------------
+# Cancel order
+# ----------------------------
+@login_required
+def cancel_order(request, pk):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method")
+
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    if order.status == Order.Status.COMPLETED:
+        return HttpResponseForbidden("Cannot cancel completed order")
+
+    order.status = Order.Status.FAILED
+    order.save()
+
+    if request.htmx:
+        return order_list_partial(request)
+
+    return redirect("cart:order_list")
+
+
+# ----------------------------
+# Delete order
+# ----------------------------
+@login_required
+def delete_order(request, pk):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method")
+
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    if order.status == Order.Status.COMPLETED:
+        return HttpResponseForbidden("Cannot delete completed order")
+
+    order.delete()
+
+    if request.htmx:
+        return order_list_partial(request)
+
+    return redirect("cart:order_list")
+
+
+# ----------------------------
+# HTMX partial
+# ----------------------------
+@login_required
+def order_list_partial(request):
+    orders = (
+        Order.objects
+        .filter(user=request.user)
+        .prefetch_related("order_items__skin")
+        .order_by("-created_at")
+    )
+
+    return render(request, "cart/partials/order_list.html", {"orders": orders})
