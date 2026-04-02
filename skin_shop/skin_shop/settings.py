@@ -24,7 +24,7 @@ SECRET_KEY = os.environ.get(
     "django-insecure-%apw-2j)en69vl+-1ceqrx_ks(#qe8ns*k!1&)(ppp_05c*7g0",
 )
 
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1").split(",")
 
@@ -41,10 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Media storage
-    "cloudinary_storage",
-    "cloudinary",
-
     # Third-party
     "django_htmx",
     "tailwind",
@@ -55,6 +51,12 @@ INSTALLED_APPS = [
     "cart",
     "minecraft",
 ]
+
+if not DEBUG:
+    INSTALLED_APPS += [
+        "cloudinary_storage",
+        "cloudinary",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -148,33 +150,49 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = "/media/"
 
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+if DEBUG:
+    # ---------------- LOCAL ----------------
+    MEDIA_ROOT = BASE_DIR / "media"
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
+else:
+    # ---------------- PRODUCTION ----------------
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 # -----------------------------------------------------------------------------
 # Cloudinary configuration
 # -----------------------------------------------------------------------------
 
-CLOUDINARY_STORAGE = {
+if not DEBUG:
+    import cloudinary
+
+    CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
     "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
     "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
-}
+    }
 
-import cloudinary
-
-cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
-    secure=True,
-)
+    cloudinary.config(
+        cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        api_key=os.environ.get("CLOUDINARY_API_KEY"),
+        api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+        secure=True,
+    )
 
 # -----------------------------------------------------------------------------
 # Default primary key field type

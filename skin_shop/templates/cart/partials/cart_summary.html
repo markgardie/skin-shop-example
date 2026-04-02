@@ -4,7 +4,10 @@
         <span>{{ cart.total_price }} UAH</span>
     </div>
 
-    <a href="#" class="btn btn-primary w-full mt-4">
-        Checkout
-    </a>
+    <form method="POST" action="{% url 'cart:checkout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary w-full mt-4">
+            Оплатити
+        </button>
+    </form>
 </div>
