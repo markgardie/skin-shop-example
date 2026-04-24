@@ -2,9 +2,10 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
 
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Order, OrderItem
 from shop.models import Skin
-from .forms import AddToCartForm, UpdateCartItemForm, RemoveFromCartForm
+from .forms import AddToCartForm, RemoveFromCartForm
+from minecraft.services import apply_skins_for_order
 
 
 # ----------------------------
@@ -38,20 +39,10 @@ def add_to_cart(request):
         return HttpResponseBadRequest("Invalid data")
 
     skin_id = form.cleaned_data["skin_id"]
-    quantity = form.cleaned_data["quantity"]
-
     skin = get_object_or_404(Skin, id=skin_id)
     cart, _ = Cart.objects.get_or_create(user=request.user)
 
-    item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        skin=skin,
-        defaults={"quantity": quantity}
-    )
-
-    if not created:
-        item.quantity += quantity
-        item.save()
+    CartItem.objects.get_or_create(cart=cart, skin=skin)
 
     if request.htmx:
         return render(request, "cart/partials/cart_items.html", {"cart": cart})
@@ -60,34 +51,7 @@ def add_to_cart(request):
 
 
 # ----------------------------
-# 4) Оновлення кількості
-# ----------------------------
-@login_required
-def update_cart_item(request):
-    if request.method != "POST":
-        return HttpResponseBadRequest("Invalid method")
-
-    form = UpdateCartItemForm(request.POST)
-    if not form.is_valid():
-        return HttpResponseBadRequest("Invalid data")
-
-    item_id = form.cleaned_data["item_id"]
-    quantity = form.cleaned_data["quantity"]
-
-    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-    item.quantity = quantity
-    item.save()
-
-    cart = item.cart
-
-    if request.htmx:
-        return render(request, "cart/partials/cart_items.html", {"cart": cart})
-
-    return redirect("cart:detail")
-
-
-# ----------------------------
-# 5) Видалення з корзини
+# 4) Видалення з корзини
 # ----------------------------
 @login_required
 def remove_from_cart(request):
@@ -108,3 +72,117 @@ def remove_from_cart(request):
         return render(request, "cart/partials/cart_items.html", {"cart": cart})
 
     return redirect("cart:detail")
+
+
+# ----------------------------
+# 5) Оформлення замовлення
+# ----------------------------
+@login_required
+def checkout(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method")
+
+    cart = get_object_or_404(Cart, user=request.user)
+    items = cart.items.select_related("skin").all()
+
+    if not items.exists():
+        return redirect("cart:detail")
+
+    # Створюємо замовлення
+    order = Order.objects.create(user=request.user)
+
+    for item in items:
+        OrderItem.objects.create(
+            order=order,
+            skin=item.skin,
+            price_at_purchase=item.skin.price,
+        )
+
+    # Очищаємо корзину
+    items.delete()
+
+    # Застосовуємо скіни на сервері
+    apply_skins_for_order(order)
+
+    return redirect("cart:order_success", pk=order.pk)
+
+
+# ----------------------------
+# 6) Сторінка успішного замовлення
+# ----------------------------
+@login_required
+def order_success(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    return render(request, "cart/order_success.html", {"order": order})
+
+
+@login_required
+def order_list(request):
+    orders = (
+        Order.objects
+        .filter(user=request.user)
+        .prefetch_related("order_items__skin")
+        .order_by("-created_at")
+    )
+
+    return render(request, "cart/order_list.html", {"orders": orders})
+
+from django.http import HttpResponseForbidden
+
+
+# ----------------------------
+# Cancel order
+# ----------------------------
+@login_required
+def cancel_order(request, pk):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method")
+
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    if order.status == Order.Status.COMPLETED:
+        return HttpResponseForbidden("Cannot cancel completed order")
+
+    order.status = Order.Status.FAILED
+    order.save()
+
+    if request.htmx:
+        return order_list_partial(request)
+
+    return redirect("cart:order_list")
+
+
+# ----------------------------
+# Delete order
+# ----------------------------
+@login_required
+def delete_order(request, pk):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid method")
+
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    if order.status == Order.Status.COMPLETED:
+        return HttpResponseForbidden("Cannot delete completed order")
+
+    order.delete()
+
+    if request.htmx:
+        return order_list_partial(request)
+
+    return redirect("cart:order_list")
+
+
+# ----------------------------
+# HTMX partial
+# ----------------------------
+@login_required
+def order_list_partial(request):
+    orders = (
+        Order.objects
+        .filter(user=request.user)
+        .prefetch_related("order_items__skin")
+        .order_by("-created_at")
+    )
+
+    return render(request, "cart/partials/order_list.html", {"orders": orders})
