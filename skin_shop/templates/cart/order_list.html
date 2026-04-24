@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Мої замовлення{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Мої замовлення</h1>
+
+<div id="orders-container"
+     hx-get="{% url 'cart:order_list_partial' %}"
+     hx-trigger="load"
+     hx-target="#orders-container"
+     hx-swap="innerHTML">
+</div>
+
+{% endblock %}

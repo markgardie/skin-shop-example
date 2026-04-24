@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10">
+
+    <h1 class="text-3xl font-bold mb-2">✅ Замовлення оформлено!</h1>
+    <p class="text-gray-500 mb-8">Замовлення #{{ order.pk }} від {{ order.created_at|date:"d.m.Y H:i" }}</p>
+
+    <div class="space-y-4">
+        {% for item in order.order_items.all %}
+        <div class="card bg-base-200 p-4 flex flex-row justify-between items-center rounded-xl">
+
+            <div class="flex items-center gap-4">
+                <img src="{{ item.skin.image.url }}" class="w-16 h-16 rounded-lg" alt="{{ item.skin.name }}">
+                <div>
+                    <p class="font-semibold text-lg">{{ item.skin.name }}</p>
+                    <p class="text-sm opacity-70">{{ item.price_at_purchase }} UAH</p>
+                </div>
+            </div>
+
+            <div>
+                {% if item.status == "applied" %}
+                    <span class="badge badge-success">✓ Застосовано</span>
+                {% elif item.status == "failed" %}
+                    <span class="badge badge-error">✗ Помилка</span>
+                {% else %}
+                    <span class="badge badge-warning">⏳ Очікує</span>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="card bg-base-100 p-4 rounded-xl mt-6">
+        <div class="flex justify-between text-lg font-semibold">
+            <span>Разом:</span>
+            <span>{{ order.total_price }} UAH</span>
+        </div>
+    </div>
+
+    <a href="{% url 'cart:detail' %}" class="btn btn-outline w-full mt-4">
+        Повернутись до корзини
+    </a>
+
+</div>
+{% endblock %}
